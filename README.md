@@ -2,7 +2,7 @@
 
 > **A Defense-in-Depth Guardrail System for an Autonomous Financial AI Agent**
 
-A full implementation of the Aegis Framework — a masterclass in building enterprise-grade guardrail systems for modern Agentic AI. The project builds an Autonomous Investment Portfolio Manager agent, demonstrates its critical failure modes without guardrails, then deploys a three-layer defense-in-depth architecture to govern its behaviour.
+A full implementation of the Aegis Framework - a masterclass in building enterprise-grade guardrail systems for modern Agentic AI. The project builds an Autonomous Investment Portfolio Manager agent, demonstrates its critical failure modes without guardrails, then deploys a three-layer defense-in-depth architecture to govern its behaviour.
 
 ---
 
@@ -28,13 +28,13 @@ An Autonomous Investment Portfolio Manager with three tools:
 |------|------|-------------|
 | `query_10k_report_tool` | Low | Keyword search over NVIDIA's SEC 10-K annual filing |
 | `get_real_time_market_data_tool` | Low | Market feed with price, news, and a planted unverified social media rumour |
-| `execute_trade_tool` | **HIGH** | Executes BUY/SELL stock orders — irreversible in production |
+| `execute_trade_tool` | **HIGH** | Executes BUY/SELL stock orders - irreversible in production |
 
 Built with **LangGraph** as a ReAct (Reason + Act) loop. The LLM reasons about the user's request, selects tools, observes results, and loops until it has a final answer.
 
 ---
 
-### The Unguarded Baseline (Section 1)
+### The Unguarded Baseline
 
 Before guardrails, the agent is given a deliberately dangerous prompt:
 
@@ -42,45 +42,45 @@ Before guardrails, the agent is given a deliberately dangerous prompt:
 
 The unguarded agent fails on three dimensions simultaneously:
 
-- **Financial Risk** — executes a panic sell of 1,000 shares based on an unverified social media rumour
-- **PII Leakage** — echoes the raw account number back in its response
-- **Compliance Risk** — never checks the 10-K for official context; acts impulsively on low-quality information
+- **Financial Risk** - executes a panic sell of 1,000 shares based on an unverified social media rumour
+- **PII Leakage** - echoes the raw account number back in its response
+- **Compliance Risk** - never checks the 10-K for official context; acts impulsively on low-quality information
 
 This failure is the foundation that justifies everything that follows.
 
 ---
 
-### Layer 1 — The Perimeter: Input Guardrails (Section 2)
+### Layer 1 - The Perimeter: Input Guardrails 
 
 Three guardrails run **in parallel via `asyncio`** before the user's prompt ever reaches the agent's core reasoning engine. Total latency is the slowest single check, not the sum of all three.
 
 | # | Guardrail | Method | Catches |
 |---|-----------|--------|---------|
-| 1 | **Topical Guardrail** | LLM classifier (fast model) | Off-topic queries — routes to `FINANCE_INVESTING`, `GENERAL_QUERY`, or `OFF_TOPIC` |
+| 1 | **Topical Guardrail** | LLM classifier (fast model) | Off-topic queries - routes to `FINANCE_INVESTING`, `GENERAL_QUERY`, or `OFF_TOPIC` |
 | 2 | **Sensitive Data Guardrail** | Regex-based redaction | PII (account numbers, SSNs) and MNPI keywords (insider info, unannounced earnings) |
 | 3 | **Threat & Compliance Guardrail** | Safety-specialized LLM (Llama Guard pattern) | Jailbreaks, manipulation attempts, policy violations |
 
-If any guardrail fails, the prompt is **rejected at the perimeter** — the agent core is never invoked.
+If any guardrail fails, the prompt is **rejected at the perimeter** - the agent core is never invoked.
 
 **Result on the high-risk prompt:** Blocked in 1.58 seconds. PII flagged, threat detected, agent never reached.
 
 ---
 
-### Layer 2 — The Command Core: Action Plan Guardrails (Section 3)
+### Layer 2 - The Command Core: Action Plan Guardrails 
 
 For threats subtle enough to pass Layer 1, Layer 2 intercepts the agent's *internal plan* before any tool is executed. The agent is first forced to output a structured JSON action plan. Three guardrails then scrutinise its intent.
 
 | # | Guardrail | Method | Catches |
 |---|-----------|--------|---------|
-| 4 | **Automated Policy Guardrail** | LLM reads `policy.txt` and **generates its own Python validation code** — agentic self-governance | Trades exceeding $10,000, prohibited sell conditions, non-exchange tickers |
+| 4 | **Automated Policy Guardrail** | LLM reads `policy.txt` and **generates its own Python validation code** - agentic self-governance | Trades exceeding $10,000, prohibited sell conditions, non-exchange tickers |
 | 5 | **Groundedness & Hallucination Check** | LLM-as-a-Judge on the action plan's reasoning | Plans built on hallucinated facts not present in the conversation context |
-| 6 | **Human-in-the-Loop Escalation** | Rule-based trigger | High-value trades (>$5,000) — pauses execution and requires explicit human approval |
+| 6 | **Human-in-the-Loop Escalation** | Rule-based trigger | High-value trades (>$5,000) - pauses execution and requires explicit human approval |
 
 **Guardrail 4** is architecturally notable: an LLM reads a plain-English `policy.txt` document and writes the Python function `validate_trade_action()` at runtime. The system then dynamically imports and executes that generated code. Policies become self-maintaining.
 
 ---
 
-### Layer 3 — The Final Checkpoint: Output Guardrails (Section 4)
+### Layer 3 — The Final Checkpoint: Output Guardrails
 
 Even if a request passes Layers 1 and 2, the agent's final response is reviewed before it reaches the user.
 
@@ -94,7 +94,7 @@ Responses that fail any check are replaced with a sanitised, compliant alternati
 
 ---
 
-### Full System Integration & The Aegis Scorecard (Section 5)
+### Full System Integration & The Aegis Scorecard 
 
 The complete pipeline:
 
@@ -103,7 +103,7 @@ User Prompt
      │
      ▼
 ┌─────────────────────────────────────────┐
-│  LAYER 1 — Input Guardrails (parallel)  │
+│  LAYER 1 - Input Guardrails (parallel)  │
 │  ├── Topical Check                      │
 │  ├── Sensitive Data / PII Redaction     │
 │  └── Threat & Compliance Check          │
@@ -111,13 +111,13 @@ User Prompt
                │ ALLOWED
                ▼
 ┌─────────────────────────────────────────┐
-│  Planning Node — Agent generates        │
+│  Planning Node - Agent generates        │
 │  structured JSON action plan            │
 └──────────────┬──────────────────────────┘
                │
                ▼
 ┌─────────────────────────────────────────┐
-│  LAYER 2 — Action Plan Guardrails       │
+│  LAYER 2 - Action Plan Guardrails       │
 │  ├── Automated Policy Validation        │
 │  ├── Groundedness Check on Plan         │
 │  └── Human-in-the-Loop Trigger          │
@@ -125,7 +125,7 @@ User Prompt
                │ APPROVED
                ▼
 ┌─────────────────────────────────────────┐
-│  Tool Execution — ReAct loop            │
+│  Tool Execution - ReAct loop            │
 │  (query_10K / market_data / trade)      │
 └──────────────┬──────────────────────────┘
                │
@@ -136,7 +136,7 @@ User Prompt
                │
                ▼
 ┌─────────────────────────────────────────┐
-│  LAYER 3 — Output Guardrails            │
+│  LAYER 3 - Output Guardrails            │
 │  ├── Hallucination Check (LLM-as-Judge) │
 │  ├── FINRA Rule 2210 Compliance         │
 │  └── Citation Verification             │
@@ -146,7 +146,7 @@ User Prompt
           Safe Response
 ```
 
-The **Aegis Scorecard** provides a holistic per-run summary — latency, cost, and the pass/fail verdict from every guardrail layer — formatted as a `pandas` DataFrame for developers, compliance officers, and stakeholders.
+The **Aegis Scorecard** provides a holistic per-run summary - latency, cost, and the pass/fail verdict from every guardrail layer - formatted as a `pandas` DataFrame for developers, compliance officers, and stakeholders.
 
 **The Redemption Run:** The same high-risk prompt from Section 1 is re-run through the fully guarded system. Layer 1 catches it in under 2 seconds. The agent core is never invoked. The user receives a professional, safe response explaining why their request was declined.
 
@@ -247,7 +247,7 @@ python main.py --demo --no-kb
 
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
-| `GEMINI_API_KEY` | ✅ | — | Google AI Studio API key |
+| `GEMINI_API_KEY` | Yes | — | Google AI Studio API key |
 | `SEC_EDGAR_EMAIL` | No | `your.email@example.com` | Contact email for SEC EDGAR User-Agent header ([SEC policy](https://www.sec.gov/os/accessing-edgar-data)) |
 | `MODEL_FAST` | No | `gemini-2.5-flash` | Model for lightweight guardrail tasks (topical classifier) |
 | `MODEL_GUARD` | No | `gemini-2.5-flash` | Model for safety classification (threat guardrail) |
@@ -273,12 +273,12 @@ Guardrail 6 exists specifically to ensure that for the highest-stakes decisions,
 
 ## Core Principles Demonstrated
 
-1. **Assume Failure** — build with the expectation that users will misuse the system and the agent will make mistakes
-2. **Defense-in-Depth** — a layered approach catches diverse threats; no single guardrail is a single point of failure
-3. **Inspect Intent, Not Just Input/Output** — intercepting the agent's *plan* before execution catches the most subtle risks
-4. **Automate Governance** — LLMs can help build and maintain their own safety systems from human-readable policies
-5. **Right Tool for the Job** — fast/cheap models for broad checks, powerful models for deep evaluation
-6. **Human is the Ultimate Authority** — for the highest-stakes actions, human-in-the-loop is a feature, not a limitation
+1. **Assume Failure** - build with the expectation that users will misuse the system and the agent will make mistakes
+2. **Defense-in-Depth** - a layered approach catches diverse threats; no single guardrail is a single point of failure
+3. **Inspect Intent, Not Just Input/Output** - intercepting the agent's *plan* before execution catches the most subtle risks
+4. **Automate Governance** - LLMs can help build and maintain their own safety systems from human-readable policies
+5. **Right Tool for the Job** - fast/cheap models for broad checks, powerful models for deep evaluation
+6. **Human is the Ultimate Authority** - for the highest-stakes actions, human-in-the-loop is a feature, not a limitation
 
 ---
 
