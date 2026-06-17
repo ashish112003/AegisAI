@@ -1,4 +1,4 @@
-# AegisAI — The Aegis Framework
+# AegisAI - The Aegis Framework
 
 > **A Defense-in-Depth Guardrail System for an Autonomous Financial AI Agent**
 
