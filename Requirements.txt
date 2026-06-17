@@ -1,0 +1,37 @@
+# AegisAI — requirements.txt
+# The Aegis Framework: Defense-in-Depth Guardrail System
+# for an Autonomous Financial AI Agent
+#
+# Install:
+#   pip install -r requirements.txt
+
+# ── LLM / Agent framework ────────────────────────────────────
+# LangGraph — agent graph orchestration
+# (Notebook uses 0.1.18; 0.2.x is backward-compatible)
+langgraph>=0.2.0,<0.3.0
+
+# LangChain core — @tool decorator, ToolNode, BaseMessage
+langchain-core>=0.2.0,<0.3.0
+
+# LangChain Google GenAI — ChatGoogleGenerativeAI with native function calling
+langchain-google-genai>=1.0.0,<2.0.0
+
+# Google Generative AI Python SDK (underlying Gemini client)
+google-generativeai>=0.7.0,<1.0.0
+
+# ── SEC EDGAR data sourcing ───────────────────────────────────
+sec-edgar-downloader>=6.0.0,<7.0.0
+
+# ── Utilities ────────────────────────────────────────────────
+# Pydantic — TradeOrder schema and tool input models
+pydantic>=2.0.0,<3.0.0
+
+# pandas — Aegis Scorecard DataFrame
+pandas>=2.0.0,<3.0.0
+
+# python-dotenv — loads .env into os.environ
+python-dotenv>=1.0.0,<2.0.0
+
+# ── Optional: architecture diagram ───────────────────────────
+# Requires system graphviz: sudo apt-get install graphviz
+# pygraphviz>=1.13
