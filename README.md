@@ -14,7 +14,8 @@ The Aegis Framework is built around the cybersecurity principle of **defense-in-
 
 ---
 
-![Uploading image.png…]()
+<img width="6096" height="2839" alt="image" src="https://github.com/user-attachments/assets/f89216b3-494e-4d64-aa87-f97adb75c91a" />
+
 
 
 ## What's Built
