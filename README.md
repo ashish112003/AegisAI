@@ -80,7 +80,7 @@ For threats subtle enough to pass Layer 1, Layer 2 intercepts the agent's *inter
 
 ---
 
-### Layer 3 — The Final Checkpoint: Output Guardrails
+### Layer 3 - The Final Checkpoint: Output Guardrails
 
 Even if a request passes Layers 1 and 2, the agent's final response is reviewed before it reaches the user.
 
